@@ -11,13 +11,20 @@ function generateRoomCode() {
     return roomCode;
 }
 
-function createRoom() {
+function createRoom(username = "Host") {
+
+    const hostId = crypto.randomUUID();
 
     const room = {
         roomCode: generateRoomCode(),
-        hostId: crypto.randomUUID(),
+        hostId,
         maxParticipants: 5,
-        participants: [],
+        participants: [
+            {
+                userId: hostId,
+                username
+            }
+        ],
         createdAt: new Date(),
         expiresAt: new Date(Date.now() + 60 * 60 * 1000),
         status: "active"
@@ -90,8 +97,60 @@ function joinRoom(roomCode, username) {
     };
 }
 
+function leaveRoom(roomCode, userId) {
+
+    const room = rooms.find(room => room.roomCode === Number(roomCode));
+
+    if (!room) {
+        return {
+            success: false,
+            status: 404,
+            message: "Room not found."
+        };
+    }
+
+    const participantIndex = room.participants.findIndex(
+        participant => participant.userId === userId
+    );
+
+    if (participantIndex === -1) {
+        return {
+            success: false,
+            status: 404,
+            message: "Participant not found."
+        };
+    }
+
+    room.participants.splice(participantIndex, 1);
+
+    if (room.participants.length === 0) {
+
+        const roomIndex = rooms.findIndex(
+            room => room.roomCode === Number(roomCode)
+        );
+
+        rooms.splice(roomIndex, 1);
+
+        return {
+            success: true,
+            message: "Room deleted because it became empty."
+        };
+    }
+
+    if (room.hostId === userId) {
+        room.hostId = room.participants[0].userId;
+    }
+
+    return {
+        success: true,
+        message: "Left room successfully.",
+        room
+    };
+}
+
 module.exports = {
     createRoom,
     getAllRooms,
-    joinRoom
+    joinRoom,
+    leaveRoom
 };

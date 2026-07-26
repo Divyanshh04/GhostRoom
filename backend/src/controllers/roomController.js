@@ -1,7 +1,8 @@
 const roomService = require("../services/roomService");
 
 function createRoom(req, res) {
-    const room = roomService.createRoom();
+    const { username } = req.body;
+    const room = roomService.createRoom(username);
     res.status(201).json(room);
 }
 
@@ -20,8 +21,19 @@ function joinRoom(req, res) {
     res.status(result.status || 200).json(result);
 }
 
+function leaveRoom(req, res) {
+
+    const { roomCode } = req.params;
+    const { userId } = req.body;
+
+    const result = roomService.leaveRoom(roomCode, userId);
+
+    res.status(result.status || 200).json(result);
+}
+
 module.exports = {
     createRoom,
     getAllRooms,
-    joinRoom
+    joinRoom,
+    leaveRoom
 };
