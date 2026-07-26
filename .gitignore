@@ -1,0 +1,19 @@
+# =========================
+# Node.js
+# =========================
+backend/node_modules/
+
+# Environment Variables
+backend/.env
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Temporary Files
+*.tmp
