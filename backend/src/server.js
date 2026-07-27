@@ -4,7 +4,7 @@ const { Server } = require("socket.io");
 const initializeSocket = require("./sockets/socketHandler");
 const redisClient = require("./config/redis");
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const server = http.createServer(app);
 
