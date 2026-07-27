@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../create_room/create_room_screen.dart';
+import '../join_room/join_room_screen.dart';
 
 // ---- Cyberpunk Palette (Enhanced Luminance) ----
 import '../../theme/cyber_palette.dart';
@@ -196,7 +197,14 @@ class WelcomeScreen extends StatelessWidget {
                   // ---- JOIN ROOM Button ----
                   _NeonOutlineButton(
                     label: "JOIN ROOM",
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const JoinRoomScreen(),
+                        ),
+                      );
+                    },
                   ),
 
                   const SizedBox(height: 40),

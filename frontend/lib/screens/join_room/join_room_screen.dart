@@ -1,20 +1,22 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+
 import '../../services/api_service.dart';
 import '../chat/chat_screen.dart';
 
 // ---- Cyberpunk Palette (Matches WelcomeScreen) ----
 import '../../theme/cyber_palette.dart';
 
-class CreateRoomScreen extends StatefulWidget {
-  const CreateRoomScreen({super.key});
+class JoinRoomScreen extends StatefulWidget {
+  const JoinRoomScreen({super.key});
 
   @override
-  State<CreateRoomScreen> createState() => _CreateRoomScreenState();
+  State<JoinRoomScreen> createState() => _JoinRoomScreenState();
 }
 
-class _CreateRoomScreenState extends State<CreateRoomScreen> {
+class _JoinRoomScreenState extends State<JoinRoomScreen> {
   final TextEditingController usernameController = TextEditingController();
+  final TextEditingController roomCodeController = TextEditingController();
   final ApiService apiService = ApiService();
   final FocusNode _focusNode = FocusNode();
 
@@ -29,6 +31,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
   @override
   void dispose() {
     usernameController.dispose();
+    roomCodeController.dispose();
     _focusNode.dispose();
     super.dispose();
   }
@@ -70,7 +73,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
           ),
         ),
         title: const Text(
-          "CREATE ROOM",
+          "JOIN ROOM",
           style: TextStyle(
             fontFamily: 'monospace',
             letterSpacing: 4,
@@ -261,70 +264,156 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 15),const SizedBox(height: 28),
 
-                  // ---- CREATE ROOM Button ----
-                  _NeonFilledButton(
-                    label: "CREATE ROOM",
-                    onPressed: () async {
-                      final username = usernameController.text.trim();
+Text(
+  "Enter room code",
+  style: TextStyle(
+    fontFamily: 'monospace',
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    color: CyberPalette.neonCyan,
+    letterSpacing: 1.2,
+  ),
+),
 
-                      if (username.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            backgroundColor: const Color(0xFF090D16),
-                            behavior: SnackBarBehavior.floating,
-                            elevation: 8,
-                            margin: const EdgeInsets.all(16),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                            content: Row(
-                              children: [
-                                const Icon(
-                                  Icons.warning_amber_rounded,
-                                  color: CyberPalette.neonMagenta,
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 10),
-                                Text(
-                                  "Please enter a username",
-                                  style: TextStyle(
-                                    fontFamily: 'monospace',
-                                    color: CyberPalette.neonMagenta,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              side: BorderSide(
-                                color: CyberPalette.neonMagenta.withOpacity(0.8),
-                                width: 1.2,
-                              ),
+const SizedBox(height: 8),
+
+Text(
+  "> ask your friend for the room code_",
+  style: TextStyle(
+    fontFamily: 'monospace',
+    color: CyberPalette.slate,
+    fontSize: 12,
+    letterSpacing: 0.8,
+  ),
+),
+
+const SizedBox(height: 20),
+
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: _focusNode.hasFocus
+                          ? [
+                              BoxShadow(
+                                color: CyberPalette.neonCyan.withOpacity(0.25),
+                                blurRadius: 20,
+                                spreadRadius: 1,
+                              )
+                            ]
+                          : [],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                            color: Colors.white.withOpacity(0.03),
+                            border: Border.all(
+                              color: _focusNode.hasFocus
+                                  ? CyberPalette.neonCyan
+                                  : CyberPalette.neonCyan.withOpacity(0.4),
+                              width: _focusNode.hasFocus ? 1.6 : 1.2,
                             ),
                           ),
-                        );
-                        return;
-                      }
+                          child: TextField(
+                            controller: roomCodeController,
+                            focusNode: _focusNode,
+                            style: const TextStyle(
+                              fontFamily: 'monospace',
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.5,
+                            ),
+                            cursorColor: CyberPalette.neonCyan,
+                            decoration: InputDecoration(
+                              prefixIcon: Padding(
+                                padding: const EdgeInsets.only(left: 18, right: 10),
+                                child: Text(
+                                  ">",
+                                  style: TextStyle(
+                                    fontFamily: 'monospace',
+                                    color: _focusNode.hasFocus ? CyberPalette.neonGreen : CyberPalette.slate,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              prefixIconConstraints: const BoxConstraints(
+                                minWidth: 0,
+                                minHeight: 0,
+                              ),
+                              hintText: "enter_room_code",
+                              hintStyle: TextStyle(
+                                fontFamily: 'monospace',
+                                color: CyberPalette.slate.withOpacity(0.6),
+                                letterSpacing: 1.5,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 18,
+                                vertical: 18,
+                              ),
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 56),
+                
+                  // ---- CREATE ROOM Button ----
+                 _NeonFilledButton(
+  label: "JOIN ROOM",
+  onPressed: () async {
+    final username = usernameController.text.trim();
+    final roomCode = roomCodeController.text.trim();
 
-final room = await apiService.createRoom(username);
+    if (username.isEmpty || roomCode.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please enter username and room code"),
+        ),
+      );
+      return;
+    }
 
-final roomCode = room.roomCode;
-final myUserId = room.participants.first.userId;
+    try {
+      final room = await apiService.joinRoom(
+        int.parse(roomCode),
+        username,
+      );
+
+final myUser = room.participants.firstWhere(
+  (participant) => participant.username == username,
+);
 
 Navigator.push(
   context,
   MaterialPageRoute(
     builder: (_) => ChatScreen(
       username: username,
-      roomCode: roomCode,
-      userId: myUserId,
+      roomCode: room.roomCode,
+      userId: myUser.userId,
     ),
   ),
 );
-                    },
-                  ),
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    }
+  },
+),
+                    
+                  
                 ],
               ),
             ),

@@ -24,6 +24,12 @@ function initializeSocket(io) {
                     userId: user.userId,
                     username: user.username
                 });
+                const room = require("../services/roomService")
+    .getRoomByCode(user.roomCode);
+
+io.to(user.roomCode).emit("participant-count", {
+    count: room ? room.participants.length : 0
+});
 
                 console.log(`${user.username} left room ${user.roomCode}`);
             }

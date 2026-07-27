@@ -35,6 +35,9 @@ function registerChatEvents(io, socket) {
             userId: participant.userId,
             username: participant.username
         });
+        io.to(roomCode).emit("participant-count", {
+    count: room.participants.length
+});
 
     });
 
