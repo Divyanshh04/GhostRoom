@@ -148,9 +148,50 @@ function leaveRoom(roomCode, userId) {
     };
 }
 
+function getRoomByCode(roomCode) {
+    return rooms.find(room => room.roomCode === Number(roomCode));
+}
+
+function removeParticipant(roomCode, userId) {
+
+    const room = getRoomByCode(roomCode);
+
+    if (!room) {
+        return null;
+    }
+
+    const participantIndex = room.participants.findIndex(
+        participant => participant.userId === userId
+    );
+
+    if (participantIndex === -1) {
+        return room;
+    }
+
+    room.participants.splice(participantIndex, 1);
+
+    if (room.participants.length === 0) {
+        const roomIndex = rooms.findIndex(
+            room => room.roomCode === Number(roomCode)
+        );
+
+        rooms.splice(roomIndex, 1);
+
+        return null;
+    }
+
+    if (room.hostId === userId) {
+        room.hostId = room.participants[0].userId;
+    }
+
+    return room;
+}
+
 module.exports = {
     createRoom,
     getAllRooms,
     joinRoom,
-    leaveRoom
+    leaveRoom,
+    getRoomByCode,
+    removeParticipant
 };
